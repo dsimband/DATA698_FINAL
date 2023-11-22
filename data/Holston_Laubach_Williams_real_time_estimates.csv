@@ -3,7 +3,7 @@
 Final data point: 2023Q2,,,
 ,,,
 ,,,
-Date,Growth_g,Real_Interest_Rate,Output_Gap
+observation_date,Growth_g,Real_Interest_Rate,Output_Gap
 1961-01-01,4.828758861,5.493490544,-3.75557289
 1961-04-01,4.989797876,5.682398606,-3.40755653
 1961-07-01,4.923091398,5.60903634,-2.640212931

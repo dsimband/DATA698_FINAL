@@ -32,8 +32,10 @@ def add_fed_chair(df, chair_df):
     df.reset_index(inplace=True)
 
     df['chair_name'] = None
+    df['chair_index'] = 0
     for i, row in chair_df.iterrows():
         df['chair_name'] = df['chair_name'].where((df['DATE'] < row['Start_Date']) | (df['DATE'] > row['End_Date']), row['Name'] )
+        df['chair_index'] = df['chair_index'].where((df['DATE'] < row['Start_Date']) | (df['DATE'] > row['End_Date']), i )
     
     df.set_index('DATE',inplace=True)
     return df

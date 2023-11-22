@@ -84,14 +84,15 @@ def load_taylor():
     print('gdppot_df:', gdppot_df.shape)
     gdpdef_df = pd.read_csv('./data/GDPDEF.csv', parse_dates=['observation_date'], skiprows=10)
     print('gdpdef_df:', gdpdef_df.shape)
-    #fed_df = pd.read_csv('./data/FEDFUNDS.csv', parse_dates=['observation_date'], skiprows=10)
-    #print('fed_df:', fed_df.shape)
+    holston_df = pd.read_csv('./data/Holston_Laubach_Williams_real_time_estimates.csv', parse_dates=['observation_date'], skiprows=5)
+    print('holston_df:', holston_df.shape)
     
 
     
     taylor_df = t1_df.merge(gdpc1_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(gdppot_df, how='outer', left_on='observation_date', right_on='observation_date')   \
-                        .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date') 
+                        .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date')   \
+                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date') 
 
 
     taylor_df.set_index('observation_date', inplace=True)
@@ -131,8 +132,8 @@ def load_taylor():
     f_df = get_fed_chair()
     taylor_df = add_fed_chair(taylor_df, f_df)
     
-    
-    taylor_df = taylor_df.query('DATE >= "1960-01-01" & DATE < "2023-09-30"')
+    taylor_df['FEDFUNDS-1'] = taylor_df['FEDFUNDS'].shift(periods=1)
+    taylor_df = taylor_df.query('DATE >= "1961-01-01" & DATE < "2023-09-30"')
     return taylor_df
 
 
@@ -161,14 +162,15 @@ def load_taylor1a():
     print('gdppot_df:', gdppot_df.shape)
     gdpdef_df = pd.read_csv('./data/GDPDEF.csv', parse_dates=['observation_date'], skiprows=10)
     print('gdpdef_df:', gdpdef_df.shape)
-    #fed_df = pd.read_csv('./data/FEDFUNDS.csv', parse_dates=['observation_date'], skiprows=10)
-    #print('fed_df:', fed_df.shape)
+    holston_df = pd.read_csv('./data/Holston_Laubach_Williams_real_time_estimates.csv', parse_dates=['observation_date'], skiprows=5)
+    print('holston_df:', holston_df.shape)
     
 
     
     taylor_df = t1_df.merge(gdpc1_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(gdppot_df, how='outer', left_on='observation_date', right_on='observation_date')   \
-                        .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date') 
+                        .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date')   \
+                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date') 
 
 
     taylor_df.set_index('observation_date', inplace=True)
@@ -229,8 +231,8 @@ def load_taylor1a():
     f_df = get_fed_chair()
     taylor_df = add_fed_chair(taylor_df, f_df)
     
-    
-    taylor_df = taylor_df.query('DATE >= "1960-01-01" & DATE < "2023-09-30"')
+    taylor_df['FEDFUNDS-1'] = taylor_df['FEDFUNDS'].shift(periods=1)
+    taylor_df = taylor_df.query('DATE >= "1961-01-01" & DATE < "2023-09-30"')
     return taylor_df
 
 
@@ -253,13 +255,17 @@ def load_taylor2():
     
     gdpdef_df = pd.read_csv('./data/GDPDEF.csv', parse_dates=['observation_date'], skiprows=10)
     print('gdpdef_df:', gdpdef_df.shape)
+    
+    holston_df = pd.read_csv('./data/Holston_Laubach_Williams_real_time_estimates.csv', parse_dates=['observation_date'], skiprows=5)
+    print('holston_df:', holston_df.shape)
 
     t1_df = pdr.DataReader(['FEDFUNDS','PCEPILFE','GDPC1','GDPPOT','UNRATE','TB3MS'], data_source, start_date)
     t1_df.index.rename('observation_date', inplace=True)
     t1_df.reset_index(inplace=True)
 
     t1_df = t1_df.merge(pcep_df, how='outer', left_on='observation_date', right_on='observation_date')   \
-                .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date') 
+                .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date')  \
+                .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date') 
 
     t1_df.set_index('observation_date', inplace=True)
     t1_df.index.rename('DATE', inplace=True)
@@ -303,8 +309,8 @@ def load_taylor2():
     print('t1_df:', t1_df.shape)
     #t1_df.dropna(inplace=True)
     #t1_df.sort_index(inplace=True)
-    
-    t1_df = t1_df.query('DATE >= "1960-01-01" & DATE < "2023-09-30"')
+    t1_df['FEDFUNDS-1'] = t1_df['FEDFUNDS'].shift(periods=1)
+    t1_df = t1_df.query('DATE >= "1961-01-01" & DATE < "2023-09-30"')
     
     return t1_df
 
@@ -341,7 +347,6 @@ def time_split(df):
     print('test_df: ' , test_df.shape)
     
     return train_df, test_df
-
 
 
 
