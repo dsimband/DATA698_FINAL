@@ -84,6 +84,8 @@ def load_taylor():
     print('gdppot_df:', gdppot_df.shape)
     gdpdef_df = pd.read_csv('./data/GDPDEF.csv', parse_dates=['observation_date'], skiprows=10)
     print('gdpdef_df:', gdpdef_df.shape)
+    cpi_df = pd.read_csv('./data/CPIAUCSL_PC1.csv', parse_dates=['observation_date'])
+    print('cpi_df:', cpi_df.shape)
     holston_df = pd.read_csv('./data/Holston_Laubach_Williams_real_time_estimates.csv', parse_dates=['observation_date'], skiprows=5)
     print('holston_df:', holston_df.shape)
     
@@ -92,7 +94,8 @@ def load_taylor():
     taylor_df = t1_df.merge(gdpc1_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(gdppot_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date')   \
-                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date') 
+                        .merge(cpi_df, how='outer', left_on='observation_date', right_on='observation_date')      \
+                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date')
 
 
     taylor_df.set_index('observation_date', inplace=True)
