@@ -108,6 +108,7 @@ def load_taylor():
 
     taylor_df = taylor_df.resample('Q').mean()
     taylor_df['FEDFUNDS-1'] = taylor_df['FEDFUNDS'].shift(periods=1)
+    taylor_df['FEDFUNDS_diff'] = taylor_df['FEDFUNDS'] - taylor_df['FEDFUNDS-1']
 
 
 
