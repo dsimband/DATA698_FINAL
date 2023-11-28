@@ -134,9 +134,12 @@ def load_taylor():
                             )
 
     
+    taylor_df['ffef_tr_diff'] = taylor_df['ffef_tr'].diff()
+    taylor_df['ffef_tr2_diff'] = taylor_df['ffef_tr2'].diff()
+
+
 
     #taylor_df.rename(columns={'observation_date':'DATE'}, inplace=True)
-    
     taylor_df.reset_index(inplace=True)
     r_df = get_recession()
     taylor_df['recession_flag'] = taylor_df['DATE'].apply(add_recession_feature, args=(r_df,))
@@ -146,7 +149,7 @@ def load_taylor():
     taylor_df = add_fed_chair(taylor_df, f_df)
     
     
-    taylor_df = taylor_df.query('DATE >= "1961-01-01" & DATE < "2023-09-30"')
+    taylor_df = taylor_df.query('DATE >= "1962-01-01" & DATE < "2023-09-30"')
     return taylor_df
 
 
@@ -160,8 +163,9 @@ def load_misery():
     t_df.dropna(inplace=True)
     print('t_df:', t_df.shape)
 
-    u_df = pd.read_csv('./data/CPIAUCSL_PC1.csv', parse_dates=['DATE'])
-    u_df.set_index('DATE', inplace=True)
+    u_df = pd.read_csv('./data/CPIAUCSL_PC1.csv', parse_dates=['observation_date'])
+    u_df.set_index('observation_date', inplace=True)
+    u_df.index.rename('DATE', inplace=True)
     print('u_df:', u_df.shape)
 
     misery_df = pd.merge(t_df,u_df, left_index=True, right_index=True )
