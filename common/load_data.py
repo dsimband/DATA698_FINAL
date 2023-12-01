@@ -93,6 +93,8 @@ def load_taylor():
     print('cpi_df:', cpi_df.shape)
     holston_df = pd.read_csv('./data/Holston_Laubach_Williams_real_time_estimates.csv', parse_dates=['observation_date'], skiprows=5)
     print('holston_df:', holston_df.shape)
+    ff_cpi_df = pd.read_csv('./data/FEDFUNDS_CPIAUCNS_PC1.csv', parse_dates=['observation_date'], skiprows=10)
+    print('ff_cpi_df:', ff_cpi_df.shape)
     
 
     
@@ -100,7 +102,8 @@ def load_taylor():
                         .merge(gdppot_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(gdpdef_df, how='outer', left_on='observation_date', right_on='observation_date')   \
                         .merge(cpi_df, how='outer', left_on='observation_date', right_on='observation_date')      \
-                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date')
+                        .merge(holston_df, how='outer', left_on='observation_date', right_on='observation_date')  \
+                        .merge(ff_cpi_df, how='outer', left_on='observation_date', right_on='observation_date')
 
 
     taylor_df.set_index('observation_date', inplace=True)
@@ -109,7 +112,8 @@ def load_taylor():
     taylor_df = taylor_df.resample('Q').mean()
     taylor_df['FEDFUNDS-1'] = taylor_df['FEDFUNDS'].shift(periods=1)
     taylor_df['FEDFUNDS_diff'] = taylor_df['FEDFUNDS'] - taylor_df['FEDFUNDS-1']
-
+    taylor_df['FEDFUNDS_CPIAUCNS_PC1-1'] = taylor_df['FEDFUNDS_CPIAUCNS_PC1'].shift(periods=1)
+    taylor_df['FEDFUNDS_CPIAUCNS_PC1_diff'] = taylor_df['FEDFUNDS_CPIAUCNS_PC1'].diff()
 
 
     taylor_df['gap_inf'] = (taylor_df['CPIAUCSL_PC1'] - target_inf) 
@@ -170,6 +174,8 @@ def load_misery():
 
     misery_df = pd.merge(t_df,u_df, left_index=True, right_index=True )
     misery_df['m_index'] = (misery_df['CPIAUCSL_PC1']) + misery_df['UNRATE']
+    misery_df['FEDFUNDS_diff'] = misery_df['FEDFUNDS'].diff()
+    misery_df = misery_df.query('DATE >= "1955-01-01"') 
     print('misery_df:', misery_df.shape)  
     
     return misery_df
