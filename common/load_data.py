@@ -24,7 +24,8 @@ import pandas_datareader as pdr
 
 import warnings
 
-
+from dotenv import load_dotenv
+import os
 
 from common.load_features import get_recession, add_recession_feature, get_fed_chair, add_fed_chair
 
@@ -40,8 +41,10 @@ warnings.filterwarnings("ignore")
 ############################################################################
 
 
+load_dotenv()
+fred_api_key = os.getenv("fred_api_key")
+fred = Fred(api_key=fred_api_key)
 
-fred = Fred(api_key='c0a3f23bdd23a65e6546b6d0e5f4d4a5')
 rand_int = 12
 
 #  Set start date
@@ -109,7 +112,9 @@ def load_taylor():
     taylor_df.set_index('observation_date', inplace=True)
     taylor_df.index.rename('DATE', inplace=True)
 
-    taylor_df = taylor_df.resample('Q').mean()
+    taylor_df = taylor_df.resample('Q',convention='start').mean()
+    taylor_df = taylor_df.asfreq('Q')
+    
     taylor_df['FEDFUNDS-1'] = taylor_df['FEDFUNDS'].shift(periods=1)
     taylor_df['FEDFUNDS_diff'] = taylor_df['FEDFUNDS'] - taylor_df['FEDFUNDS-1']
     taylor_df['FEDFUNDS_CPIAUCNS_PC1-1'] = taylor_df['FEDFUNDS_CPIAUCNS_PC1'].shift(periods=1)
@@ -118,7 +123,8 @@ def load_taylor():
 
     taylor_df['gap_inf'] = (taylor_df['CPIAUCSL_PC1'] - target_inf) 
     taylor_df['gap_gdp'] = (taylor_df['GDPC1'] - taylor_df['GDPPOT']) / taylor_df['GDPPOT'] * 100
-    taylor_df['gap_ue'] = (full_emp - taylor_df['UNRATE'])
+    taylor_df['gap_ue'] = (taylor_df['UNRATE'] - full_emp)
+    #taylor_df['gap_ue'] = (full_emp - taylor_df['UNRATE'])
 
 
 

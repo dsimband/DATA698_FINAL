@@ -63,7 +63,8 @@ def model_results(name, actual, predicted, aic, r_df):
                 'aic' : aic
                 }
     
-    r_df = r_df.append(new_row, ignore_index=True)
+    #r_df = r_df.append(new_row, ignore_index=True)
+    r_df = pd.concat([r_df, pd.DataFrame([new_row])], ignore_index=True)
     return round(r_df,4)
   
 
